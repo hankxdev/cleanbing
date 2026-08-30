@@ -1,0 +1,9 @@
+# Test/verification screenshots
+*.png
+
+# Session / harness artifacts
+.claude/
+.remember/
+
+# OS
+.DS_Store

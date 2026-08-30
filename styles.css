@@ -1,0 +1,61 @@
+/*
+ * Clean Bing — styles.css
+ *
+ * Hides the MSN news feed, Microsoft Rewards / promo badges, and trending /
+ * sidebar widgets on the Bing homepage. Applied at document_start so clutter
+ * never flashes into view.
+ *
+ * Selectors were derived from the live www.bing.com DOM (2026). Bing markup
+ * varies by region / A-B test and many class names are hashed, so we prefer
+ * stable ids, semantic containers and data-* / aria attributes. content.js
+ * provides a MutationObserver fallback for anything injected later.
+ *
+ * IMPORTANT: The daily background image lives in #hp_app > .hp_body >
+ * .hp_media_container > #img_cont, which is a SIBLING of the feed content.
+ * We hide only the feed content, never #hp_app itself, so the background stays.
+ */
+
+/* ---- MSN news feed / homepage content cards ---- */
+
+/* The web-component that renders the whole MSN "peek" feed. */
+bing-homepage-feed,
+.peregrine-widgets,
+#widget_container,
+
+/* The scrollable feed section that sits below the search box. */
+#scroll_cont,
+#vs_cont,
+.vs_cont .vs,
+.modules_wrapper,
+.moduleCont,
+.module.feed_bg,
+
+/* The wrapper row that hosts the MSN peek feed. */
+.bottom_row.msnpeek,
+
+/* Homepage trivia / quiz / music promo cards. */
+.hp_trivia_outer,
+.mc_caro,
+.musCard,
+.musCardCont {
+  display: none !important;
+}
+
+/* ---- Microsoft Rewards banners & promo badges ---- */
+
+/* Rewards points badge / entry point in the identity header. */
+#id_rh_w,
+.points-container,
+a[aria-label="Microsoft Rewards"],
+
+/* "Welcome back / Sign in to earn Rewards" sign-in promo flyout. */
+.b_siprov2 {
+  display: none !important;
+}
+
+/* ---- Trending searches / sidebar widgets ---- */
+
+#trending_now_tile,
+#msn_overflow {
+  display: none !important;
+}

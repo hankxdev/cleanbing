@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Clean Bing",
+  "version": "1.0.0",
+  "description": "Removes the MSN news feed, Microsoft Rewards banners, promo badges, and trending widgets from bing.com, and resets the search placeholder to \"Search\". Keeps the daily background image.",
+  "content_scripts": [
+    {
+      "matches": ["*://*.bing.com/*"],
+      "css": ["styles.css"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "clean-bing@local.extension",
+      "strict_min_version": "121.0"
+    }
+  }
+}
