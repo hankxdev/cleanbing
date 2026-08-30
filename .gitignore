@@ -1,5 +1,5 @@
-# Test/verification screenshots
-*.png
+# Test/verification screenshots (root-level only; keep icons/*.png)
+/*.png
 
 # Session / harness artifacts
 .claude/

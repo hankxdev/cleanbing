@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Clean Bing mark: magnifying glass with a sparkle gleam in the lens.
+     Source of truth for the PNG icons (see tools/make-icons.js). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect x="0" y="0" width="128" height="128" rx="28" ry="28" fill="#008373"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round">
+    <!-- lens ring -->
+    <circle cx="55.7" cy="53.8" r="29.3" stroke-width="10.9"/>
+    <!-- handle -->
+    <line x1="79.7" y1="77.8" x2="99.2" y2="97.3" stroke-width="13.3"/>
+  </g>
+  <!-- sparkle: 4-point astroid star centered in the lens -->
+  <path fill="#ffffff" d="
+    M55.7 36.5
+    C57.5 48.4 61.1 52.0 73.0 53.8
+    C61.1 55.6 57.5 59.2 55.7 71.1
+    C53.9 59.2 50.3 55.6 38.4 53.8
+    C50.3 52.0 53.9 48.4 55.7 36.5 Z"/>
+</svg>
