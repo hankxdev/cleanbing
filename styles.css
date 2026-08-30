@@ -59,3 +59,12 @@ a[aria-label="Microsoft Rewards"],
 #msn_overflow {
   display: none !important;
 }
+
+/* ---- Extra clutter below / around the search box ---- */
+
+/* Promo / shortcut row rendered directly under the search box, and the
+ * placeholder overlay element Bing layers over the input. */
+div.below_sbox,
+div.sb_form_placeholder {
+  display: none !important;
+}
