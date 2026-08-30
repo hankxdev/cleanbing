@@ -67,12 +67,25 @@ Releases are cut manually from the **Actions → Release** workflow
    `America/Chicago` timezone set in the workflow; change the `TZ` env there
    to use UTC or another zone. Don't run two releases in the same minute, or
    the versions collide.
-2. Package **only the runtime files** into `cleanbing.zip`
+2. Run `node tools/build.js` to package **only the runtime files**
    (`manifest.json`, `content.js`, `styles.css`, `icons/icon*.png`) — no
-   screenshots, `tools/`, README, or SVG source.
+   screenshots, `tools/`, README, or SVG source — into two zips:
+   - `dist/cleanbing-chrome.zip` — manifest with `browser_specific_settings`
+     stripped (Chrome doesn't use it).
+   - `dist/cleanbing-firefox.zip` — manifest keeping the `gecko` block,
+     including `data_collection_permissions` (AMO requires this).
 3. Commit the version bump and push a `vX.Y.Z` tag.
-4. Create a GitHub Release with the zip attached.
-5. Upload and publish the zip to the Chrome Web Store.
+4. Create a GitHub Release with **both** zips attached.
+5. Upload and publish the Chrome zip to the Chrome Web Store.
+
+### Building locally
+
+Run `node tools/build.js` any time to produce both store zips in `dist/`.
+Chrome and Firefox need different manifests — the script generates each from
+the single `manifest.json` source of truth. Firefox/AMO requires the
+`data_collection_permissions` declaration (Clean Bing collects nothing, so it
+is `{ "required": ["none"] }`); the Chrome package omits the Firefox-only
+`browser_specific_settings` entirely.
 
 ### One-time setup
 

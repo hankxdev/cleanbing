@@ -44,18 +44,8 @@ jobs:
             console.log("Version:", v);
           '
 
-      - name: Package extension (runtime files only)
-        run: |
-          zip -r cleanbing.zip \
-            manifest.json \
-            content.js \
-            styles.css \
-            icons/icon16.png \
-            icons/icon32.png \
-            icons/icon48.png \
-            icons/icon128.png
-          echo "--- zip contents ---"
-          unzip -l cleanbing.zip
+      - name: Package extension (Chrome + Firefox zips)
+        run: node tools/build.js
 
       - name: Commit and tag
         env:
@@ -73,14 +63,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.bump.outputs.version }}
         run: |
-          gh release create "v${VERSION}" cleanbing.zip \
+          gh release create "v${VERSION}" \
+            dist/cleanbing-chrome.zip dist/cleanbing-firefox.zip \
             --title "v${VERSION}" \
             --generate-notes
 
       - name: Publish to Chrome Web Store
         uses: mnao305/chrome-extension-upload@v5
         with:
-          file-path: cleanbing.zip
+          file-path: dist/cleanbing-chrome.zip
           extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
           client-id: ${{ secrets.CHROME_CLIENT_ID }}
           client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
