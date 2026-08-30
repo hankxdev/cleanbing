@@ -1,0 +1,93 @@
+name: Release
+
+# Manual release: bump the version, package the runtime files, tag,
+# cut a GitHub Release, and publish to the Chrome Web Store.
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump"
+        type: choice
+        required: true
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+# Only one release may run at a time.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bump manifest version
+        id: bump
+        env:
+          BUMP: ${{ github.event.inputs.bump }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const m = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
+            const [a, b, c] = m.version.split(".").map(Number);
+            const t = process.env.BUMP || "patch";
+            const v = (t === "major" ? [a + 1, 0, 0]
+                     : t === "minor" ? [a, b + 1, 0]
+                     :                 [a, b, c + 1]).join(".");
+            m.version = v;
+            fs.writeFileSync("manifest.json", JSON.stringify(m, null, 2) + "\n");
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, "version=" + v + "\n");
+            console.log("New version:", v);
+          '
+
+      - name: Package extension (runtime files only)
+        run: |
+          zip -r cleanbing.zip \
+            manifest.json \
+            content.js \
+            styles.css \
+            icons/icon16.png \
+            icons/icon32.png \
+            icons/icon48.png \
+            icons/icon128.png
+          echo "--- zip contents ---"
+          unzip -l cleanbing.zip
+
+      - name: Commit and tag
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git commit -m "Release v${VERSION}"
+          git tag "v${VERSION}"
+          git push origin HEAD:main --follow-tags
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          gh release create "v${VERSION}" cleanbing.zip \
+            --title "v${VERSION}" \
+            --generate-notes
+
+      - name: Publish to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v5
+        with:
+          file-path: cleanbing.zip
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          publish: true

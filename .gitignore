@@ -5,5 +5,8 @@
 .claude/
 .remember/
 
+# Build artifacts
+*.zip
+
 # OS
 .DS_Store
