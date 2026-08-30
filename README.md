@@ -17,6 +17,12 @@ On `*://*.bing.com/*` it:
 
 The **daily background image is deliberately left untouched.**
 
+## Disclaimer
+
+Clean Bing is an independent, third-party tool for use with `bing.com`. It is
+**not affiliated with, endorsed by, or sponsored by Microsoft**. "Bing", "MSN",
+and "Microsoft Rewards" are trademarks of Microsoft Corporation.
+
 ## Files
 
 - `manifest.json` — MV3 manifest. One `content_scripts` entry matching
