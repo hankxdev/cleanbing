@@ -1,19 +1,9 @@
 name: Release
 
-# Manual release: bump the version, package the runtime files, tag,
-# cut a GitHub Release, and publish to the Chrome Web Store.
+# Manual release: stamp a date-based version, package the runtime files,
+# tag, cut a GitHub Release, and publish to the Chrome Web Store.
 on:
   workflow_dispatch:
-    inputs:
-      bump:
-        description: "Version bump"
-        type: choice
-        required: true
-        default: patch
-        options:
-          - patch
-          - minor
-          - major
 
 # Only one release may run at a time.
 concurrency:
@@ -30,23 +20,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Bump manifest version
+      - name: Stamp date-based version (YY.M.D.HHMM)
         id: bump
         env:
-          BUMP: ${{ github.event.inputs.bump }}
+          # Version is generated from wall-clock time in this zone.
+          # Change to UTC (or another tz) if you prefer.
+          TZ: America/Chicago
         run: |
           node -e '
             const fs = require("fs");
+            const d = new Date(); // local time per the TZ env above
+            const parts = [
+              d.getFullYear() % 100,          // YY
+              d.getMonth() + 1,               // M  (no leading zero)
+              d.getDate(),                    // D
+              d.getHours() * 100 + d.getMinutes(), // HHMM as an integer
+            ];
+            const v = parts.join(".");
             const m = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
-            const [a, b, c] = m.version.split(".").map(Number);
-            const t = process.env.BUMP || "patch";
-            const v = (t === "major" ? [a + 1, 0, 0]
-                     : t === "minor" ? [a, b + 1, 0]
-                     :                 [a, b, c + 1]).join(".");
             m.version = v;
             fs.writeFileSync("manifest.json", JSON.stringify(m, null, 2) + "\n");
             fs.appendFileSync(process.env.GITHUB_OUTPUT, "version=" + v + "\n");
-            console.log("New version:", v);
+            console.log("Version:", v);
           '
 
       - name: Package extension (runtime files only)

@@ -58,10 +58,15 @@ permanently you'd need to sign/package it via AMO.
 ## Releasing (GitHub Actions → Chrome Web Store)
 
 Releases are cut manually from the **Actions → Release** workflow
-(`.github/workflows/release.yml`). Click **Run workflow**, choose a bump
-(`patch` / `minor` / `major`), and it will:
+(`.github/workflows/release.yml`). Click **Run workflow** and it will:
 
-1. Bump the `version` in `manifest.json`.
+1. Stamp a **date-based version** into `manifest.json` in the form
+   `YY.M.D.HHMM` (e.g. `26.8.30.1354`). `HHMM` is stored as an integer
+   (`hour*100 + minute`) so there are no leading zeros — Chrome rejects
+   those — meaning `09:05` becomes `905`. The timestamp uses the
+   `America/Chicago` timezone set in the workflow; change the `TZ` env there
+   to use UTC or another zone. Don't run two releases in the same minute, or
+   the versions collide.
 2. Package **only the runtime files** into `cleanbing.zip`
    (`manifest.json`, `content.js`, `styles.css`, `icons/icon*.png`) — no
    screenshots, `tools/`, README, or SVG source.
